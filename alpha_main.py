@@ -27,7 +27,7 @@ def get_main_admin_command(message):
 
     list_of_commands = ['Работа с файлами', 'Работа с сотрудниками', 'Подготовить рассылку']
 
-    if command == list_of_commands:
+    if command in list_of_commands:
 
         if command == 'Работа с файлами':
             bot.send_message(message.from_user.id, 'Что будем делать с фалами?', reply_markup=alpha_button.admin_buttons_for_file())
@@ -320,7 +320,7 @@ def get_main_staff_command(message):
 
     list_of_commands = ['Скачать файл', 'Получить список файлов', 'Связаться с HR-менеджером', 'Получить информацию о сотрудниках']
 
-    if command == list_of_commands:
+    if command in list_of_commands:
 
         if command == 'Скачать файл':
             bot.send_message(message.from_user.id, 'Отпавьте id файла')
