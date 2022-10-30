@@ -1,3 +1,4 @@
+from sunau import AUDIO_FILE_ENCODING_ADPCM_G723_5
 import telebot
 
 import alpha_button
@@ -24,19 +25,25 @@ def start_message_admin(message):
 def get_main_admin_command(message):
     command = message.text
 
-    if command == 'Работа с файлами':
-        bot.send_message(message.from_user.id, 'Что будем делать с фалами?', reply_markup=alpha_button.admin_buttons_for_file())
-        bot.register_next_step_handler(message, get_file_admin_command)
+    list_of_commands = ['Работа с файлами', 'Работа с сотрудниками', 'Подготовить рассылку']
 
-    elif command == 'Работа с сотрудниками':
-        bot.send_message(message.from_user.id, 'Выберите действие с сотрудниками', reply_markup=alpha_button.admin_buttons_for_staff())
-        bot.register_next_step_handler(message, get_staff_admin_command)
+    if command == list_of_commands:
 
-    elif command == 'Подготовить рассылку':
-        bot.send_message(message.from_user.id, 'Отправьте текст для рассылки всем сотрудникам')
-        bot.register_next_step_handler(message, get_message_for_flood)
+        if command == 'Работа с файлами':
+            bot.send_message(message.from_user.id, 'Что будем делать с фалами?', reply_markup=alpha_button.admin_buttons_for_file())
+            bot.register_next_step_handler(message, get_file_admin_command)
 
+        elif command == 'Работа с сотрудниками':
+            bot.send_message(message.from_user.id, 'Выберите действие с сотрудниками', reply_markup=alpha_button.admin_buttons_for_staff())
+            bot.register_next_step_handler(message, get_staff_admin_command)
 
+        elif command == 'Подготовить рассылку':
+            bot.send_message(message.from_user.id, 'Отправьте текст для рассылки всем сотрудникам')
+            bot.register_next_step_handler(message, get_message_for_flood)
+
+    else:
+        bot.send_message(message.from_user.id, 'Введена неизвестная команда. Попробуйте снова или обратитесь к разработчику:\n\n @lagutinmichael')
+        bot.register_next_step_handler(message, get_main_admin_command)
 
 #обработчик админ-команд для сотрудников
 def get_staff_admin_command(message):
@@ -304,17 +311,40 @@ def get_data_birth(message, id_check, phone_number):
     data_bitrh = message.text
 
     alpha_database.add_staff_user(id_check, message.from_user.id, phone_number, data_bitrh)
-    bot.send_message(message.from_user.id, 'Вы успешно добавлены зарегестрировались', reply_markup=alpha_button.main_staff_buttons())
+    bot.send_message(message.from_user.id, 'Вы успешно добавлены зарегестрировались\nВвыберите действие', reply_markup=alpha_button.main_staff_buttons())
     bot.register_next_step_handler(message, get_main_staff_command)
 
 # обработчик команд пользователя
 def get_main_staff_command(message):
     command = message.text
 
-    if command == 'Первая кнопка':
-        bot.send_message(message.from_user.id, 'Отпавьте id файла')
-        bot.register_next_step_handler(message, get_file)
+    list_of_commands = ['Скачать файл', 'Получить список файлов', 'Связаться с HR-менеджером', 'Получить информацию о сотрудниках']
 
+    if command == list_of_commands:
+
+        if command == 'Скачать файл':
+            bot.send_message(message.from_user.id, 'Отпавьте id файла')
+            bot.register_next_step_handler(message, get_file)
+
+        elif command == 'Получить список файлов':
+            data = alpha_database.get_all_files()
+            bot.send_message(message.from_user.id, data)
+            bot.register_next_step_handler(message, get_main_admin_command)
+
+        elif command == 'Связаться с HR-менеджером':
+            bot.send_message(message.from_user.id, 'Контактные данные HR-менеджмера:\nUsername: @hr_alphaedu')
+            bot.register_next_step_handler(message.from_user.id, get_main_staff_command)
+
+        elif command == 'Получить информацию о сотрудниках':
+            data = alpha_database.get_all_staff()
+
+            bot.send_message(message.from_user.id, data)
+            bot.register_next_step_handler(message, get_main_admin_command)
+
+    else:
+        bot.send_message(message.from_user.id, 'Неизвестный запрос. Воспользуйтесь кнопкой', reply_markup=alpha_button.main_staff_buttons())
+        bot.register_next_step_handler(message, get_main_staff_command)
+        
 
 def get_file(message):
     id = int(message.text)

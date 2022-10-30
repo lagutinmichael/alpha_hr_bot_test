@@ -64,7 +64,6 @@ def send_number():
 
 def main_staff_buttons():
     kb = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-
     button_1 = types.KeyboardButton('Получить список файлов')
     button_2 = types.KeyboardButton('Скачать файл')
     button_3 = types.KeyboardButton('Связаться с HR-менеджером')
