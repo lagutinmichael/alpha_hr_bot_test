@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "alpha-hr-bot",
+  "private_key_id": "c025d359c4670d2eefa3039de6f447927c7cbae5",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCXCqd+7OqI9Mcw\n8A0CM9BmmGHPMgZ1cc+uBlzoeJoZwT+a1pjatxxsXBJumFW3IcWo88yJCJB44M/U\nrpB1c4/KvTmUyxyp5sQamhJSHjz4zvv585HyXcAATVHUftEb5HkFQroafKI/X4K1\nhPch1PKPbkZawNmfFSLY+rnrHdYK7bptja/PF9N5tzJdYIUp9CYRswzCN/3hw8X5\nlstKqTwCAqlGApiN/NuYTUExEIQiTpq9JdG29uTP3TOdMyqEKn6McSjNOHi6YkuL\nE5Xacqqcf5gFymaxH5ZeM22Z9N4LDF9oUtA5Zb6lluaGpcNsR1vBhcC6PbgGzhSq\nkC550wEZAgMBAAECggEAQbJ2rHSshynBQn4Hin+zFA0P7imaOZdpeA54dv2OOcme\nuuDA19Fx4Ygi1EwabG+aJCT3QFujS5CtlZrgZtX/I3YvB5NZQmWHwvJlKabRan/N\nhij1wHAaxYbcIwuONQ2pvioJ/N9dSydmGUJepC6V2uFiZLMhdVqiL7LPD3+IzHNz\nwPV/uBNGRZt1oC9VSCmVC72Hnv3l+Q7ISPaS8NtMKsb1cW7XjUkD1h9BHZIAroD2\nIERSY1pdNURERy8touL3RGB9vq45c9Cm0YaxEJ7tdHJPdmLJ2DXy2P+aZNBqfX8+\nibSW9aiXTKab9StxyarEU73gvKILn/SvpOHrqul7SQKBgQDM2XXA/pCUQWMfu9IX\n+Qs3l+chaBgFapbabE7/m3oIqYTOsDfDP9FSxUSic9/5C0epRHN2jNl661GfnMGr\n5TVyTvFRrBSb8DhAqUgLJbejw4iqkfEozWH4TMS4N627RUea1JCDJ/AnrrTlFzT8\nobdFuMbhCEKq2cr+4O01PtjkjwKBgQC8waZN/pJcnU7swRZlpuOISHPA/rmZ9qOK\nlP77aYLRgr553GUcSV6NTe6QuNClhjEXpVN6wtTmRuMbWAI8amXFPuukV8KaC7iv\nIoyi+kaxG1CphGyqJnxx6T/V3zC1aHHpsb5zjoI+YwurguE9k4HKAAhZNzWVoGQ9\njrXGH5yj1wKBgQChCux59ycuhmEpF31Jf26EHBWGu9D2oR9LRA6vAEnl+W8BFqQg\nCVHEonUcyb/wiB+kQL4NGxn2en1G3/OZ8a4c2Vb6ADCLj0SKAQs0SEigpB4TCnzu\nuNgmXiPhN1SLfyGV5TpfAczZRY3M9HuhiHkOhP9E9juDGYlu6uFRFMFqnQKBgCnZ\n+gjDECquymgeK9wgE8UM43WARSDJGdvJS3vtGg9gIOGeJ2ENN4S3KdU21TROO6ZV\nhtvqRRBF2WcfrWc95BDG8bJ/rus+/BUA4RPl0DTGrKzZasqTO/Z51CiUkxU18kPx\noBu5FlHE3jqKC2z+vsFOHovBfQUPCgrIEK+8JJwDAoGBAKAc6I4Pp4zuC7iFHHU6\nkoxYJk9kR7SJPLh667rnYTZBUydlJD4n4DoY3y4JfU0tFU3jANiJr+I+p2qm2vND\ng4Yhb0F71/39+WNiqxAB4gT9xBaP9mVlpxqiZrVWX2KRb1AoI0foIUAbOoowKVly\n2dH/DqYv7FJEBkJhYQgNha97\n-----END PRIVATE KEY-----\n",
+  "client_email": "alpha-hr-bot-admin@alpha-hr-bot.iam.gserviceaccount.com",
+  "client_id": "103785607452661117842",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/alpha-hr-bot-admin%40alpha-hr-bot.iam.gserviceaccount.com"
+}

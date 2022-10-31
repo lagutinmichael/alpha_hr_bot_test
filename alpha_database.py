@@ -197,8 +197,6 @@ def get_all_files():
 
     all_staff = sql.execute('SELECT * FROM files')
 
-    print (all_staff)
-
     for staff in all_staff:
         id_line = f'{str(staff[0])} | '
         name_line = f'{str(staff[2])} | '

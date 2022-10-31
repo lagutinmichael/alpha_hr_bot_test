@@ -3,6 +3,7 @@ import telebot
 import alpha_button
 import alpha_database
 import time
+import alpha_database_google
 ####---- подключение бота ----####
 
 bot = telebot.TeleBot('5362600863:AAF3trI8XAgxWRklTWkTI6r8-DXoZDBQSZc')
@@ -52,7 +53,8 @@ def get_staff_admin_command(message):
     
     if command in list_of_command_for_files:
         if command == 'Получение информации о всех сотрудниках':
-            data = alpha_database.get_all_staff()
+            data = alpha_database_google.get_all_info_staff()
+            #data = alpha_database.get_all_staff()
             bot.send_message(message.from_user.id, f'Данные о всех сотрудниках:\n\n {data}', reply_markup=alpha_button.main_admin_buttons())
             bot.register_next_step_handler(message, get_main_admin_command)
 
@@ -89,21 +91,28 @@ def get_staff_admin_command(message):
 def get_new_name(message):
     name_staff = message.text
 
-    bot.send_message(message.from_user.id, 'Введите должность/позицию')
-    bot.register_next_step_handler(message, get_position, name_staff)
+    bot.send_message(message.from_user.id, 'Введите id сотруднику')
+    bot.register_next_step_handler(message, get_staff_id, name_staff)
+
+def get_staff_id(message, name_staff):
+    staff_id = message.text
+
+    bot.send_message(message.from_user.id, 'Введите должность сотрудника')
+    bot.register_next_step_handler(message, get_position, name_staff, staff_id)
 
 #получение позиции нового сотрудника
-def get_position(message, name_staff):
+def get_position(message, name_staff, staff_id):
     new_position = message.text
 
     bot.send_message(message.from_user.id, 'Введите статус сотрудинка (стажер, сотрудник, уволен)')
-    bot.register_next_step_handler(message, get_status, name_staff, new_position)
+    bot.register_next_step_handler(message, get_status, name_staff, new_position, staff_id)
 
 #получение статуса и регистрация сотрудника в базе данных
-def get_status(message, name_staff, new_position):
+def get_status(message, name_staff, new_position, staff_id):
     new_status = message.text
 
-    alpha_database.add_staff_admin(name_staff, new_position, new_status)
+    alpha_database_google.add_admin_staff(staff_id, name_staff, new_position, new_status)
+    #alpha_database.add_staff_admin(name_staff, new_position, new_status)
     bot.send_message(message.from_user.id, 'Сотрудник успешно добавлен в базу.\nОжидайте регистрации сотрудником ;)', reply_markup = alpha_button.main_admin_buttons())
     bot.register_next_step_handler(message, get_main_admin_command)
 
@@ -121,9 +130,13 @@ def get_id_for_change(message):
 #получение нового статуса для команды (изменить статус сотрудника)
 def get_new_status(message, staff_id):
     new_status = message.text
-    telegram_id_staff = alpha_database.take_telegram_id(staff_id)
-    
-    alpha_database.change_status_staff(staff_id, new_status)
+
+    #telegram_id_staff = alpha_database.take_telegram_id(staff_id)
+    #alpha_database.change_status_staff(staff_id, new_status)
+
+    telegram_id_staff = alpha_database_google.get_telegram_id(staff_id)
+    alpha_database_google.change_status_staff(staff_id, new_status)
+
     bot.send_message(message.from_user.id, 'Статус успешно обновлен\n\nВыберите действие', reply_markup=alpha_button.main_admin_buttons())
     bot.send_message(telegram_id_staff, f'Ваш статус изменён.\nНовый статус: {new_status}')
     bot.register_next_step_handler(message, get_main_admin_command)
@@ -143,9 +156,12 @@ def get_id_for_change_position(message):
 def get_new_position(message, staff_id_position):
     new_position = message.text
 
-    telegram_id_staff = alpha_database.take_telegram_id(staff_id_position)
+    #telegram_id_staff = alpha_database.take_telegram_id(staff_id_position)
+    #alpha_database.change_position_staff(staff_id_position, new_position)
 
-    alpha_database.change_position_staff(staff_id_position, new_position)
+    telegram_id_staff = alpha_database_google.get_telegram_id(staff_id_position)
+    alpha_database_google.change_position_staff(staff_id_position, new_position)
+
     bot.send_message(message.from_user.id, 'Статус сотрудника успешно изменён', reply_markup=alpha_button.main_admin_buttons())
     bot.send_message(telegram_id_staff, f'У вас новая позиция: {new_position}. Успехов!')
     bot.register_next_step_handler(message, get_main_admin_command)
@@ -171,7 +187,8 @@ def get_id_for_delete(message):
 def get_message_for_flood(message):
     text = message.text
 
-    all_telegram_id = alpha_database.take_all_telegram_id()
+    #all_telegram_id = alpha_database.take_all_telegram_id()
+    all_telegram_id = alpha_database_google.get_all_telegram_id()
 
     for i in all_telegram_id:
         bot.send_message(i[0], f'Вам рассылка от HR {text}')
@@ -205,7 +222,8 @@ def get_file_admin_command(message):
             bot.register_next_step_handler(message, get_id_file_to_delete)
 
         elif command == 'Посмотреть все файлы в базе':
-            data = alpha_database.get_all_files()
+            #data = alpha_database.get_all_files()
+            data = alpha_database_google.get_all_info_files()
             bot.send_message(message.from_user.id, f'Данные о файлах:\n\n {data}')
             bot.register_next_step_handler(message, get_file_admin_command)
 
@@ -227,7 +245,7 @@ def get_file_admin_command(message):
 def get_telegram_id_file(message, command):
     if command == 'Загрузка нового файла':
         tg_id_file = message.document.file_id
-        bot.send_message(message.from_user.id, 'Отправьте название файла')
+        bot.send_message(message.from_user.id, 'Отправьте id файла')
         bot.register_next_step_handler(message, get_name_file, tg_id_file)
 
     elif command == 'Изменнеие имени файла':
@@ -235,11 +253,19 @@ def get_telegram_id_file(message, command):
         bot.send_message(message.from_user.id, 'Отправьте новое имя файла')
         bot.register_next_step_handler(message, get_new_file_name, tg_id_file)
 
+# получение id файла для регистрации (google)
+def get_file_id(message, tg_id_file):
+    file_id = message.text
+
+    bot.send_message(message.from_user.id, 'Введите имя файла')
+    bot.register_next_step_handler(message, get_name_file, file_id, tg_id_file)
+
 #получение имени файла при первом добавлении файла в базу
-def get_name_file(message, tg_id_file):
+def get_name_file(message, tg_id_file, file_id):
     file_name = message.text
 
-    alpha_database.register_new_file(file_name, tg_id_file)
+    #alpha_database.register_new_file(file_name, tg_id_file)
+    alpha_database_google.add_new_file(file_id, tg_id_file, file_name)
     bot.send_message(message.from_user.id, 'Файл успешно зарегестрирван в базе.\nВыберите следующее действие')
     bot.register_next_step_handler(message, get_main_admin_command)
 
@@ -248,7 +274,8 @@ def get_name_file(message, tg_id_file):
 def get_new_file_name(message, tg_id_file):
     new_name = message.text
 
-    alpha_database.change_file_name(tg_id_file, new_name)
+    #alpha_database.change_file_name(tg_id_file, new_name)
+    alpha_database_google.change_file_name(tg_id_file, new_name)
     bot.send_message(message.from_user.id, 'Выберите следующее действие', reply_markup=alpha_button.main_admin_buttons())
     bot.register_next_step_handler(message, get_main_admin_command)
 
@@ -256,17 +283,19 @@ def get_new_file_name(message, tg_id_file):
 def get_id_file_to_delete(message):
     file_id = int(message.text)
 
-    alpha_database.delete_file(file_id)
-    bot.send_message(message.from_user.id, 'Выберите следующее действие', reply_markup=alpha_button.main_admin_buttons())
+    #alpha_database.delete_file(file_id)
+    alpha_database_google.delete_file(file_id)
+    bot.send_message(message.from_user.id, 'Файл удалён\nВыберите следующее действие', reply_markup=alpha_button.main_admin_buttons())
     bot.register_next_step_handler(message, get_main_admin_command)
 
 # скачивание файла
 def get_file_admin(message):
     id = int(message.text)
 
-    tg_file_id = alpha_database.get_telegram_file_id(id)
+    #file_id = alpha_database.get_telegram_file_id(id)
+    file_id = alpha_database_google.get_telegram_file_id(id)
 
-    bot.send_document(message.from_user.id, tg_file_id)
+    bot.send_document(message.from_user.id, file_id)
     bot.register_next_step_handler(message, get_main_admin_command)
 
 
@@ -283,7 +312,8 @@ def get_file_admin(message):
 @bot.message_handler(commands=['start'])
 def start_message_staff(message):
     
-    checker_telegram_id = alpha_database.check_staff_telegram_id(message.from_user.id)
+    #checker_telegram_id = alpha_database.check_staff_telegram_id(message.from_user.id)
+    checker_telegram_id = alpha_database_google.check_all_telegram_id(message.from_user.id)
     if checker_telegram_id:
         bot.send_message(message.from_user.id, 
                          text = 'Выбереите нужный для вас пункт', 
@@ -297,8 +327,10 @@ def start_message_staff(message):
 # провека пользователя на присутсвие в базе данных 
 def check_data(message):
     id_check = int(message.text)
-    checker = alpha_database.check_staff(message.text)
     
+    #checker = alpha_database.check_staff(message.text)
+    checker = alpha_database_google.check_all_id(id_check)
+
     if checker:
         bot.send_message(message.from_user.id, 'Добро пожаловать в HR-бот ALPHA\n \nОтправьте свой номер для регистрации в базе',
                                                             reply_markup=alpha_button.send_number())
@@ -322,7 +354,8 @@ def get_number(message, id_check):
 def get_data_birth(message, id_check, phone_number):
     data_bitrh = message.text
 
-    alpha_database.add_staff_user(id_check, message.from_user.id, phone_number, data_bitrh)
+    #alpha_database.add_staff_user(id_check, message.from_user.id, phone_number, data_bitrh)
+    alpha_database_google.add_info_from_staff(id_check, data_bitrh, phone_number, message.from_user.id)
     bot.send_message(message.from_user.id, 'Вы успешно добавлены зарегестрировались\nВвыберите действие', reply_markup=alpha_button.main_staff_buttons())
     bot.register_next_step_handler(message, get_main_staff_command)
 
@@ -339,7 +372,8 @@ def get_main_staff_command(message):
             bot.register_next_step_handler(message, get_file)
 
         elif command == 'Получить список файлов':
-            data = alpha_database.get_all_files()
+            #data = alpha_database.get_all_files()
+            data = alpha_database_google.get_all_info_files()
             bot.send_message(message.from_user.id, data)
             bot.register_next_step_handler(message, get_main_staff_command)
 
@@ -348,8 +382,8 @@ def get_main_staff_command(message):
             bot.register_next_step_handler(message, get_main_staff_command)
 
         elif command == 'Получить информацию о сотрудниках':
-            data = alpha_database.get_all_staff()
-
+            #data = alpha_database.get_all_staff()
+            data = alpha_database_google.get_all_info_staff()
             bot.send_message(message.from_user.id, data)
             bot.register_next_step_handler(message, get_main_staff_command)
 
@@ -357,12 +391,12 @@ def get_main_staff_command(message):
         bot.send_message(message.from_user.id, 'Неизвестный запрос. Воспользуйтесь кнопкой', reply_markup=alpha_button.main_staff_buttons())
         bot.register_next_step_handler(message, get_main_staff_command)
         
-
+# Отправка файла (скачать файл)
 def get_file(message):
     id = int(message.text)
 
-    tg_file_id = alpha_database.get_telegram_file_id(id)
-
+    #tg_file_id = alpha_database.get_telegram_file_id(id)
+    tg_file_id = alpha_database_google.get_telegram_file_id(id)
     bot.send_document(message.from_user.id, tg_file_id)
     bot.register_next_step_handler(message, get_main_staff_command)
 
