@@ -51,10 +51,12 @@ def change_position_staff(id, position):
 
 # получение всех telegram_id для рассылок
 def get_all_telegram_id():
-    value_list = staff_list.col_values(2)
-    value_list = value_list[1:]
+    values= staff_list.col_values(2)
+    values = values[1:]
+    value_list = []
+    for i in values:
+        value_list.append(int(i))
     return value_list
-
 
 #получение информации о всех сотрудниках
 def get_all_info_staff():
@@ -151,7 +153,7 @@ def get_all_info_files():
 
     for i in range(1,len(data)):
         id_line = f'{data[i][0]} | '
-        name_line = f'{data[i][2]} | '
+        name_line = f'{data[i][1]} | '
 
         full_line += f'{id_line} {name_line} \n'
 

@@ -191,7 +191,7 @@ def get_message_for_flood(message):
     all_telegram_id = alpha_database_google.get_all_telegram_id()
 
     for i in all_telegram_id:
-        bot.send_message(i[0], f'Вам рассылка от HR {text}')
+        bot.send_message(i, f'Вам рассылка от HR:\n\n{text}')
         time.sleep(0.5)
     
     bot.register_next_step_handler(message, get_main_admin_command)
@@ -214,7 +214,7 @@ def get_file_admin_command(message):
             bot.register_next_step_handler(message, get_telegram_id_file, command)
 
         elif command == 'Изменнеие имени файла':
-            bot.send_message(message.form_user.id, 'Отправьте id файла')
+            bot.send_message(message.from_user.id, 'Отправьте id файла')
             bot.register_next_step_handler(message, get_telegram_id_file, command)
 
         elif command == 'Удаление файла':
@@ -246,7 +246,7 @@ def get_telegram_id_file(message, command):
     if command == 'Загрузка нового файла':
         tg_id_file = message.document.file_id
         bot.send_message(message.from_user.id, 'Отправьте id файла')
-        bot.register_next_step_handler(message, get_name_file, tg_id_file)
+        bot.register_next_step_handler(message, get_file_id, tg_id_file)
 
     elif command == 'Изменнеие имени файла':
         tg_id_file = int(message.text)
@@ -261,12 +261,12 @@ def get_file_id(message, tg_id_file):
     bot.register_next_step_handler(message, get_name_file, file_id, tg_id_file)
 
 #получение имени файла при первом добавлении файла в базу
-def get_name_file(message, tg_id_file, file_id):
+def get_name_file(message,file_id, tg_id_file):
     file_name = message.text
 
     #alpha_database.register_new_file(file_name, tg_id_file)
     alpha_database_google.add_new_file(file_id, tg_id_file, file_name)
-    bot.send_message(message.from_user.id, 'Файл успешно зарегестрирван в базе.\nВыберите следующее действие')
+    bot.send_message(message.from_user.id, 'Файл успешно зарегестрирван в базе.\nВыберите следующее действие', reply_markup=alpha_button.main_admin_buttons())
     bot.register_next_step_handler(message, get_main_admin_command)
 
 
@@ -276,7 +276,7 @@ def get_new_file_name(message, tg_id_file):
 
     #alpha_database.change_file_name(tg_id_file, new_name)
     alpha_database_google.change_file_name(tg_id_file, new_name)
-    bot.send_message(message.from_user.id, 'Выберите следующее действие', reply_markup=alpha_button.main_admin_buttons())
+    bot.send_message(message.from_user.id, 'Имя успешно изменено!\n\nВыберите следующее действие', reply_markup=alpha_button.main_admin_buttons())
     bot.register_next_step_handler(message, get_main_admin_command)
 
 #удаление файла из базы по id
@@ -295,7 +295,7 @@ def get_file_admin(message):
     #file_id = alpha_database.get_telegram_file_id(id)
     file_id = alpha_database_google.get_telegram_file_id(id)
 
-    bot.send_document(message.from_user.id, file_id)
+    bot.send_document(message.from_user.id, file_id, reply_markup=alpha_button.main_admin_buttons())
     bot.register_next_step_handler(message, get_main_admin_command)
 
 
