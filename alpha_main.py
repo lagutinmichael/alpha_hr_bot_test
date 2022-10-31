@@ -1,10 +1,8 @@
-from sunau import AUDIO_FILE_ENCODING_ADPCM_G723_5
 import telebot
 
 import alpha_button
 import alpha_database
 import time
-
 ####---- подключение бота ----####
 
 bot = telebot.TeleBot('5362600863:AAF3trI8XAgxWRklTWkTI6r8-DXoZDBQSZc')
@@ -14,6 +12,7 @@ bot = telebot.TeleBot('5362600863:AAF3trI8XAgxWRklTWkTI6r8-DXoZDBQSZc')
 @bot.message_handler(commands=['admin', 'hr'])
 def start_message_admin(message):
     admin_id = 82798286
+    print(message)
 
     if message.from_user.id == admin_id:
         bot.send_message(admin_id, 'Выберите команду: ', reply_markup=alpha_button.main_admin_buttons())
@@ -189,7 +188,7 @@ def get_message_for_flood(message):
 # обработка команд с файлами 
 def get_file_admin_command(message):
     command = message.text
-    list_of_command_for_files = ['Загрузка нового файла', 'Изменнеие имени файла', 'Удаление файла', 'Посмотреть все файлы в базе', 'Назад']
+    list_of_command_for_files = ['Загрузка нового файла', 'Изменнеие имени файла', 'Удаление файла', 'Посмотреть все файлы в базе', 'Назад', 'Скачать файл']
 
     if command in list_of_command_for_files:
 
@@ -209,6 +208,10 @@ def get_file_admin_command(message):
             data = alpha_database.get_all_files()
             bot.send_message(message.from_user.id, f'Данные о файлах:\n\n {data}')
             bot.register_next_step_handler(message, get_file_admin_command)
+
+        elif command == 'Скачать файл':
+            bot.send_message(message.from_user.id, 'Отпавьте id файла')
+            bot.register_next_step_handler(message, get_file_admin)
 
         elif command == 'Назад':
             bot.send_message(message.from_user.id, 'Выберите действие', reply_markup=alpha_button.main_admin_buttons())
@@ -257,6 +260,15 @@ def get_id_file_to_delete(message):
     bot.send_message(message.from_user.id, 'Выберите следующее действие', reply_markup=alpha_button.main_admin_buttons())
     bot.register_next_step_handler(message, get_main_admin_command)
 
+# скачивание файла
+def get_file_admin(message):
+    id = int(message.text)
+
+    tg_file_id = alpha_database.get_telegram_file_id(id)
+
+    bot.send_document(message.from_user.id, tg_file_id)
+    bot.register_next_step_handler(message, get_main_admin_command)
+
 
 ####################################
 #----------------------------------#
@@ -287,15 +299,15 @@ def check_data(message):
     id_check = int(message.text)
     checker = alpha_database.check_staff(message.text)
     
-    if alpha_database.take_telegram_id(id_check) != 'NULL':
-        bot.send_message(message.from_user.id, 'Этот id пользователя занят. Cвяжитесь с HR')
-        bot.register_next_step_handler(message, start_message_staff)
-    elif checker:
+    if checker:
         bot.send_message(message.from_user.id, 'Добро пожаловать в HR-бот ALPHA\n \nОтправьте свой номер для регистрации в базе',
-                                                        reply_markup=alpha_button.send_number())
+                                                            reply_markup=alpha_button.send_number())
         bot.register_next_step_handler(message, get_number, id_check)
     else:
         bot.send_message(bot.from_user.id, 'Вас нет в базе сотрудников. Свяжитесь с HR-ALPHA')
+    #else: 
+    #    bot.send_message(message.from_user.id, 'Этот id пользователя занят. Cвяжитесь с HR')
+    #    bot.register_next_step_handler(message, start_message_staff)
 
 
 ## блок первой регистрации сотрудника после добавления его в базу HR-орм
@@ -329,17 +341,17 @@ def get_main_staff_command(message):
         elif command == 'Получить список файлов':
             data = alpha_database.get_all_files()
             bot.send_message(message.from_user.id, data)
-            bot.register_next_step_handler(message, get_main_admin_command)
+            bot.register_next_step_handler(message, get_main_staff_command)
 
         elif command == 'Связаться с HR-менеджером':
             bot.send_message(message.from_user.id, 'Контактные данные HR-менеджмера:\nUsername: @hr_alphaedu')
-            bot.register_next_step_handler(message.from_user.id, get_main_staff_command)
+            bot.register_next_step_handler(message, get_main_staff_command)
 
         elif command == 'Получить информацию о сотрудниках':
             data = alpha_database.get_all_staff()
 
             bot.send_message(message.from_user.id, data)
-            bot.register_next_step_handler(message, get_main_admin_command)
+            bot.register_next_step_handler(message, get_main_staff_command)
 
     else:
         bot.send_message(message.from_user.id, 'Неизвестный запрос. Воспользуйтесь кнопкой', reply_markup=alpha_button.main_staff_buttons())

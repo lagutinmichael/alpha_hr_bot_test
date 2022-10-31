@@ -148,7 +148,7 @@ def take_all_telegram_id():
     return all_telegram_id
 
 
-## РАБОТА С ТАБЛИЦЕЙ ФАЙЛОВ
+##--- РАБОТА С ТАБЛИЦЕЙ ФАЙЛОВ ---###
 
 # добавление нового файла в базу
 def register_new_file(name, id_file_message):
@@ -197,6 +197,8 @@ def get_all_files():
 
     all_staff = sql.execute('SELECT * FROM files')
 
+    print (all_staff)
+
     for staff in all_staff:
         id_line = f'{str(staff[0])} | '
         name_line = f'{str(staff[2])} | '
@@ -204,3 +206,14 @@ def get_all_files():
         full_line += f'{id_line} {name_line} \n'
 
     return full_line
+
+# получение списка id файлов (чтоб не вводили не существующие)
+def get_id_files():
+    connection = sqlite3.connect('alpha_hr_test.db')
+    sql = connection.cursor()
+
+    all_id = sql.execute('SELECT id FROM files')
+
+    return all_id
+
+print(get_all_files())

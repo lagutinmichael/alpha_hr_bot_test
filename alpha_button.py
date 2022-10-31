@@ -41,12 +41,14 @@ def admin_buttons_for_file():
     button_2 = types.KeyboardButton('Изменнеие имени файла')
     button_3 = types.KeyboardButton('Удаление файла')
     button_4 = types.KeyboardButton('Посмотреть все файлы в базе')
+    button_6 = types.KeyboardButton('Скачать файл')
     button_5 = types.KeyboardButton('Назад')
     ## добавить кнопку для работы с файлами
 
     kb.row(button_1)
     kb.row(button_2, button_3)
-    kb.row(button_4)
+    kb.row(button_4, button_6)
+
     kb.row(button_5)
     
     return kb

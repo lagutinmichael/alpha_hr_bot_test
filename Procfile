@@ -1,0 +1,1 @@
+worker: python3 alpha_main.py
