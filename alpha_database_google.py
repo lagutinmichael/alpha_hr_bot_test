@@ -8,9 +8,9 @@ scope = ["https://spreadsheets.google.com/feeds", #сами таблицы
          "https://www.googleapis.com/auth/spreadsheets",#АПИ для работы с таблицей
          "https://www.googleapis.com/auth/drive.file", #коннект к гугл-диску
          "https://www.googleapis.com/auth/drive"] #АПИ для авторизации к гугл диску
-        
+
 #подключаем необходимые ключи
-creads = ServiceAccountCredentials.from_json_keyfile_name("alpha_hr_bot_credits.json", scope) #в скобочках указываем название файла из json
+creads = ServiceAccountCredentials.from_json_keyfile_name("/home/lagutinmichael/alpha_test_bot/hr_bot/alpha_hr_bot_credits.json", scope) #в скобочках указываем название файла из json
 
 #авторизируемся под своим аккаунтом из ключа
 client = gspread.authorize(creads) #к нему будем обращаться в дальнейшем, т.к. он идёт как подключение
@@ -37,14 +37,21 @@ def add_info_from_staff(id, date_birth, number, telegram_id):
     staff_list.update_cell(cell.row, 2, telegram_id)
     staff_list.update_cell(cell.row, 5, date_birth) #обновление ячейки с днём рождения
     staff_list.update_cell(cell.row, 4, number) #обновление ячейки с номером
-   
+
 
 # изменение статуса сотрудника (сотрудник\стажер)
 def change_status_staff(id, status):
     cell = staff_list.find(str(id))
     staff_list.update_cell(cell.row, 7, status)
 
-# изменение должности сотрудника 
+# получение имени по id
+def get_name_by_id(id):
+    cell = staff_list.find(str(id))
+    name = staff_list.cell(cell.row, 3).value
+
+    return name
+
+# изменение должности сотрудника
 def change_position_staff(id, position):
     cell = staff_list.find(str(id))
     staff_list.update_cell(cell.row, 7, position)
@@ -87,7 +94,7 @@ def get_all_info_staff():
 #проверка наличия id при регистрации
 def check_all_id(id):
     values = staff_list.col_values(1)
-    
+
     if str(id) in values:
         return True
     else:
@@ -96,7 +103,7 @@ def check_all_id(id):
 #проверка наличия telegram_id в базе (во время работы)
 def check_all_telegram_id(telegram_id):
     values = staff_list.col_values(2)
-    
+
     if str(telegram_id) in values:
         return True
     else:
@@ -106,7 +113,7 @@ def check_all_telegram_id(telegram_id):
 def get_telegram_id(id):
     cell = staff_list.find(str(id))
     value = staff_list.cell(cell.row, 2).value
-    
+
     return value
 
 # удаление сотрудника из базы по id
