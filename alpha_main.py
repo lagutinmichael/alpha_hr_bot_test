@@ -5,8 +5,8 @@ import alpha_database
 import time
 import alpha_database_google
 ####---- подключение бота ----####
-
-bot = telebot.TeleBot('5362600863:AAF3trI8XAgxWRklTWkTI6r8-DXoZDBQSZc')
+TOKEN = ''
+bot = telebot.TeleBot(TOKEN)
 
 
 ####---- блок работы admin-панели ----####
